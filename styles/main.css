@@ -1,0 +1,18 @@
+.pokedex-content {
+    height: 100%;
+}
+
+.main-body-card {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+
+@media screen and (min-width: 1280px){
+    .pokedex-content {
+        padding: 0px max(0px, calc(50% - 720px));
+    }
+}

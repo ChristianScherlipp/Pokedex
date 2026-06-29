@@ -1,13 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokedex</title>
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="./styles/font.css">
+    <link rel="stylesheet" href="./styles/standard.css">
+    <link rel="stylesheet" href="./styles/header.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/card.css">
+    <link rel="stylesheet" href="./styles/footer.css">
+    <link rel="stylesheet" href="./styles/basic.css">
 </head>
 <body>
-    <header></header>
-    <main></main>
-    <footer></footer>
+    <header class="header-logo-nav">
+        <section class="header-logo-titel">
+            <img src="./assets/icons/pokeball.svg" alt="">
+            <p class="^header-text">Pokédex</p>
+        </section>
+        <nav class="search">
+            <input type="text" placeholder="Search Pokemon">
+            <button>search</button>
+        </nav>
+    </header>
+    <main class="pokedex-content">
+        <section id="pokedex-content-area" class="main-body-card">
+            <section class="pekedex-card">
+                <header class="card-header"></header>
+                <main class="card-main"></main>
+                <footer class="card-footer"></footer>
+            </section>
+        </section>
+    </main>
+    <footer class="footer-logo">
+        <section class="footer-logo-titel">
+            <img src="./assets/icons/pokeball.svg" alt="">
+            <p class="^header-text">Pokédex</p>
+        </section>
+        <p>2026 Pokédex designed by Christian Scherlipp</p>
+    </footer>
 </body>
 </html>
