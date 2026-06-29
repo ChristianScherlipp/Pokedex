@@ -1,5 +1,33 @@
 .pekedex-card {
-    width: 7rem;
-    height: 14rem;
-    
+    width: 14rem;
+    height: 18rem;
+    background-color: aliceblue;
+    border-radius: 0.75rem;
+    border: transparent;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+    width: 100%;
+    height: 3rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: aqua;
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.card-main{
+    width: 100%;
+    height: 12rem;
+}
+
+.card-footer{
+    width: 100%;
+    height: 3rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: aqua;
+    border-radius: 0 0 0.75rem 0.75rem;
 }
