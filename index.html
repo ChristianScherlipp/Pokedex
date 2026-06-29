@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./styles/standard.css">
     <link rel="stylesheet" href="./styles/header.css">
     <link rel="stylesheet" href="./styles/card.css">
+    <link rel="stylesheet" href="./styles/type.css">
     <link rel="stylesheet" href="./styles/main.css">
     <link rel="stylesheet" href="./styles/footer.css">
     <link rel="stylesheet" href="./styles/basic.css">
@@ -16,7 +17,7 @@
     <script src="./scripts/database.js"></script>
     <script src="./scripts/template.js"></script>
 </head>
-<body>
+<body onload="init()">
     <header class="header-logo-nav">
         <section class="header-logo-titel">
             <img src="./assets/icons/pokeball.svg" alt="">
@@ -30,20 +31,7 @@
     <main class="pokedex-content">
         <h1>Pokédex</h1>
         <section id="pokedex-content-area" class="main-body-card">
-            <section class="pekedex-card">
-                <header class="card-header">
-                    <h2 id="pokemon-number">001</h2>
-                    <h2 id="pokemon-name">Name</h2>
-                </header>
-                <main class="card-main">
-                    <img id="pokemon-img" src="" alt="">
-                </main>
-                <footer class="card-footer">
-                    <div id="poke-type-bg" class="poke-type-bg">
-                        <img id="poke-type-icon" src="" alt="">
-                    </div>
-                </footer>
-            </section>
+            
         </section>
     </main>
     <footer class="footer-logo">

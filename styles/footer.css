@@ -5,6 +5,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 2rem;
     background: linear-gradient(145deg, rgb(101, 177, 253), rgb(50, 148, 253));
     box-shadow: inset 4px 4px 8px rgba(255,255,255,.8),
                 inset -4px -4px 8px rgba(163,177,198,.5);

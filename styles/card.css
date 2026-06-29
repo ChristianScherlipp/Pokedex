@@ -1,6 +1,6 @@
 .pekedex-card {
     width: 14rem;
-    height: 18rem;
+    height: 20rem;
     background-color: aliceblue;
     border-radius: 0.75rem;
     border: transparent;
@@ -19,14 +19,14 @@
 
 .card-main{
     width: 100%;
-    height: 12rem;
+    height: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .card-main > img {
-    width: 15rem;
+    height: 80%;
 }
 
 .card-footer{
@@ -38,3 +38,18 @@
     background-color: aqua;
     border-radius: 0 0 0.75rem 0.75rem;
 }
+
+.poke-type-bg {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.poke-type-bg > img {
+    width: 2rem;
+}
+

@@ -1,0 +1,37 @@
+.poke-type-fire   { background-color: #FBA64C; }
+.poke-type-water  { background-color: #539DDF; }
+.poke-type-grass  { background-color: #60BD58; }
+.poke-type-bug   { background-color: #92BD2D; }
+.poke-type-normal   { background-color: #A0A29F; }
+.poke-type-poison   { background-color: #B763CF; }
+.poke-type-electric   { background-color: #F2D94E; }
+.poke-type-ground   { background-color: #DA7C4D; }
+.poke-type-fairy   { background-color: #EF90E6; }
+.poke-type-fighting   { background-color: #D3425F; }
+.poke-type-psychic   { background-color: #FA8582; }
+.poke-type-rock   { background-color: #C9BC8A; }
+.poke-type-ghost   { background-color: #5F6DBC; }
+.poke-type-ice   { background-color: #76D1C1; }
+.poke-type-dragon   { background-color: #0C6AC8; }
+.poke-type-dark   { background-color: #595761; }
+.poke-type-flying   { background-color: #A1BBEC; }
+.poke-type-steel   { background-color: #5795A3; }
+
+.poke-type-logo-fire   { filter: invert(62%) sepia(73%) saturate(370%) hue-rotate(348deg) brightness(97%) contrast(102%); }
+.poke-type-logo-water  { filter: invert(55%) sepia(13%) saturate(1989%) hue-rotate(167deg) brightness(104%) contrast(84%); }
+.poke-type-logo-grass  { filter: invert(66%) sepia(50%) saturate(483%) hue-rotate(68deg) brightness(89%) contrast(87%); }
+.poke-type-logo-bug   { background-color: #92BD2D; }
+.poke-type-logo-normal   { background-color: #A0A29F; }
+.poke-type-logo-poison   { background-color: #B763CF; }
+.poke-type-logo-electric   { background-color: #F2D94E; }
+.poke-type-logo-ground   { background-color: #DA7C4D; }
+.poke-type-logo-fairy   { background-color: #EF90E6; }
+.poke-type-logo-fighting   { background-color: #D3425F; }
+.poke-type-logo-psychic   { background-color: #FA8582; }
+.poke-type-logo-rock   { background-color: #C9BC8A; }
+.poke-type-logo-ghost   { background-color: #5F6DBC; }
+.poke-type-logo-ice   { background-color: #76D1C1; }
+.poke-type-logo-dragon   { background-color: #0C6AC8; }
+.poke-type-logo-dark   { background-color: #595761; }
+.poke-type-logo-flying   { background-color: #A1BBEC; }
+.poke-type-logo-steel   { background-color: #5795A3; }
