@@ -17,21 +17,21 @@
 .poke-type-flying   { background-color: #A1BBEC; }
 .poke-type-steel   { background-color: #5795A3; }
 
-.poke-type-logo-fire   { filter: invert(62%) sepia(73%) saturate(370%) hue-rotate(348deg) brightness(97%) contrast(102%); }
-.poke-type-logo-water  { filter: invert(55%) sepia(13%) saturate(1989%) hue-rotate(167deg) brightness(104%) contrast(84%); }
-.poke-type-logo-grass  { filter: invert(66%) sepia(50%) saturate(483%) hue-rotate(68deg) brightness(89%) contrast(87%); }
-.poke-type-logo-bug   { background-color: #92BD2D; }
-.poke-type-logo-normal   { background-color: #A0A29F; }
-.poke-type-logo-poison   { background-color: #B763CF; }
-.poke-type-logo-electric   { background-color: #F2D94E; }
-.poke-type-logo-ground   { background-color: #DA7C4D; }
-.poke-type-logo-fairy   { background-color: #EF90E6; }
-.poke-type-logo-fighting   { background-color: #D3425F; }
-.poke-type-logo-psychic   { background-color: #FA8582; }
-.poke-type-logo-rock   { background-color: #C9BC8A; }
-.poke-type-logo-ghost   { background-color: #5F6DBC; }
-.poke-type-logo-ice   { background-color: #76D1C1; }
-.poke-type-logo-dragon   { background-color: #0C6AC8; }
-.poke-type-logo-dark   { background-color: #595761; }
-.poke-type-logo-flying   { background-color: #A1BBEC; }
-.poke-type-logo-steel   { background-color: #5795A3; }
+.poke-type-logo-fire     { filter: invert(64%) sepia(56%) saturate(267%) hue-rotate(350deg) brightness(150%) contrast(198%); }
+.poke-type-logo-water    {  filter: invert(62%) sepia(31%) saturate(635%) hue-rotate(167deg) brightness(138%) contrast(123%); }
+.poke-type-logo-grass    { filter: invert(70%) sepia(67%) saturate(306%) hue-rotate(68deg) brightness(180%) contrast(112%); }
+.poke-type-logo-bug      { filter: invert(15%) sepia(87%) saturate(321%) hue-rotate(37deg) brightness(65%) contrast(103%); }
+.poke-type-logo-normal   { filter: invert(48%) sepia(9%) saturate(161%) hue-rotate(56deg) brightness(197%) contrast(25%); }
+.poke-type-logo-poison   { filter: invert(61%) sepia(100%) saturate(689%) hue-rotate(241deg) brightness(101%) contrast(47%); }
+.poke-type-logo-electric { filter: invert(45%) sepia(24%) saturate(654%) hue-rotate(14deg) brightness(120%) contrast(169%); }
+.poke-type-logo-ground   { filter: invert(59%) sepia(92%) saturate(223%) hue-rotate(335deg) brightness(109%) contrast(138%); }
+.poke-type-logo-fairy    { filter: invert(7%) sepia(23%) saturate(488%) hue-rotate(255deg) brightness(61%) contrast(186%); }
+.poke-type-logo-fighting { filter: invert(49%) sepia(54%) saturate(392%) hue-rotate(298deg) brightness(77%) contrast(173%); }
+.poke-type-logo-psychic  { filter: invert(15%) sepia(27%) saturate(483%) hue-rotate(313deg) brightness(63%) contrast(177%); }
+.poke-type-logo-rock     { filter: invert(58%) sepia(40%) saturate(232%) hue-rotate(10deg) brightness(159%) contrast(103%); }
+.poke-type-logo-ghost    { filter: invert(14%) sepia(84%) saturate(200%) hue-rotate(194deg) brightness(45%) contrast(151%); }
+.poke-type-logo-ice      { filter: invert(2%) sepia(18%) saturate(586%) hue-rotate(120deg) brightness(67%) contrast(126%); }
+.poke-type-logo-dragon   { filter: invert(81%) sepia(77%) saturate(337%) hue-rotate(169deg) brightness(196%) contrast(179%); }
+.poke-type-logo-dark     { filter: invert(47%) sepia(100%) saturate(524%) hue-rotate(211deg) brightness(11%) contrast(36%); }
+.poke-type-logo-flying   { filter: invert(19%) sepia(19%) saturate(536%) hue-rotate(181deg) brightness(85%) contrast(104%); }
+.poke-type-logo-steel    { filter: invert(23%) sepia(15%) saturate(646%) hue-rotate(144deg) brightness(66%) contrast(146%); }
