@@ -1,40 +1,54 @@
-let pokemonLimit = 25; // Anzahl der Pokemon, die geladen werden sollen
+let offset = 0;
+let batchSize = 20;
+let pokemonCache = {};
+let isLoading = false;
 
 function init() {
-    fetchAllPokemon();
+    loadPokemonBatch();
 }
 
-async function fetchAllPokemon() {
-    const contentArea = document.getElementById('pokedex-content-area');
-    contentArea.innerHTML = ''; // Statische Beispielkarte entfernen
+async function loadPokemonBatch() {
+    if (isLoading) return;
 
-    // Schritt 1: Liste der ersten POKEMON_LIMIT Pokemon-Namen + URLs holen
-    const pokemonList = await fetchPokemonList(pokemonLimit);
-    console.log(pokemonList);
-    
-    // Schritt 2: Alle Detail-Requests gleichzeitig (parallel) starten
-    const detailPromises = [];
-    for (let i = 0; i < pokemonList.length; i++) {
-        detailPromises.push(fetchPokemonDetails(pokemonList[i].url));
-    }
-    const pokemonResults = await Promise.all(detailPromises);
+    isLoading = true;
+    updateLoadButton(true);
 
-    // Schritt 3: Karten in der richtigen Reihenfolge (nach ID) rendern
-    pokemonResults
-        .filter(pokemon => pokemon !== null) // fehlgeschlagene Requests ausfiltern
-        .sort((a, b) => Number(a.id) - Number(b.id))
-        .forEach(pokemon => {
-            contentArea.innerHTML += getPokemonCards(pokemon);
-        });
+    const pokemonList = await fetchPokemonList(batchSize, offset);
+
+    const detailPromises = pokemonList.map(pokemon => {
+
+        // Cache prüfen
+        if (pokemonCache[pokemon.name]) {
+            return Promise.resolve(pokemonCache[pokemon.name]);
+        }
+
+        return fetchPokemonDetails(pokemon.url);
+    });
+
+    const results = await Promise.all(detailPromises);
+
+    results.forEach(pokemon => {
+        if (!pokemon) return;
+
+        // Im Cache speichern
+        pokemonCache[pokemon.name] = pokemon;
+
+        renderPokemonCard(pokemon);
+    });
+
+    offset += batchSize;
+
+    isLoading = false;
+    updateLoadButton(false);
 }
 
-async function fetchPokemonList(limit) {
+async function fetchPokemonList(limit, offset) {
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=0`);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
         const data = await response.json();
-        return data.results; // Array aus { name, url }
+        return data.results;
     } catch (error) {
-        console.error('Fehler beim Laden der Pokemon-Liste:', error);
+        console.error(error);
         return [];
     }
 }
@@ -48,11 +62,29 @@ async function fetchPokemonDetails(url) {
             id:     String(data.id).padStart(3, '0'),
             name:   data.name,
             img:    data.sprites.other.dream_world.front_default
-                 || data.sprites.front_default,
+                ||  data.sprites.front_default,
             type:   data.types[0].type.name,
         };
     } catch (error) {
         console.error(`Fehler beim Laden von ${url}:`, error);
         return null;
+    }
+}
+
+function renderPokemonCard(pokemon) {
+    const contentArea = document.getElementById('pokedex-content-area');
+
+    contentArea.innerHTML += getPokemonCards(pokemon);
+}
+
+function updateLoadButton(loading) {
+    const button = document.getElementById("load-more-btn");
+
+    if (loading) {
+        button.disabled = true;
+        button.innerText = "Lädt...";
+    } else {
+        button.disabled = false;
+        button.innerText = "Mehr laden";
     }
 }

@@ -4,7 +4,7 @@
     background-color: aliceblue;
     border-radius: 0.75rem;
     border: transparent;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
 }
 
 .card-header {
@@ -13,8 +13,19 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: aqua;
+    background: linear-gradient(-90deg,
+                rgb(54, 65, 233) 20%,
+                rgb(57, 97, 243) 30%,
+                rgb(50, 148, 253) 45%,
+                rgb(101, 177, 253) 50%,
+                rgb(50, 148, 253) 55%,
+                rgb(57, 97, 243) 70%,
+                rgb(54, 65, 233) 80%);
     border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.card-header > h2 {
+    text-transform: capitalize;
 }
 
 .card-main{
@@ -23,9 +34,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: inset 4px 4px 8px rgba(255,255,255,.8),
+                inset -4px -4px 8px rgba(163,177,198,.5);
 }
 
 .card-main > img {
+    width: 80%;
     height: 80%;
 }
 
@@ -35,7 +49,14 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: aqua;
+    background: linear-gradient(-90deg,
+                rgb(54, 65, 233) 20%,
+                rgb(57, 97, 243) 30%,
+                rgb(50, 148, 253) 45%,
+                rgb(101, 177, 253) 50%,
+                rgb(50, 148, 253) 55%,
+                rgb(57, 97, 243) 70%,
+                rgb(54, 65, 233) 80%);
     border-radius: 0 0 0.75rem 0.75rem;
 }
 
@@ -46,7 +67,7 @@
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    background: transparent;
+    background: whitesmoke;
 }
 
 .poke-type-bg > img {

@@ -24,7 +24,7 @@
             <p class="^header-text">Pokédex</p>
         </section>
         <nav class="search">
-            <input type="text" placeholder="Search Pokemon">
+            <input id="main-header-search" type="text" placeholder="Search Pokemon">
             <button>search</button>
         </nav>
     </header>
@@ -33,6 +33,11 @@
         <section id="pokedex-content-area" class="main-body-card">
             
         </section>
+        <div class="load-more-container">
+            <button id="load-more-btn" onclick="loadPokemonBatch()">
+                Mehr laden
+            </button>
+        </div>
     </main>
     <footer class="footer-logo">
         <section class="footer-logo-titel">

@@ -20,7 +20,22 @@ h1 {
     gap: 1rem;
 }
 
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin: 40px;
+}
 
+#load-more-btn {
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#load-more-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 
 @media screen and (min-width: 1280px){
     .pokedex-content {
