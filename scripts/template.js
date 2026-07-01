@@ -1,6 +1,6 @@
 function getPokemonCards(pokemon) {
     return `
-    <section class="pekedex-card">
+    <section onclick="" class="pekedex-card">
         <header class="card-header">
             <h2 class="pokemon-number">${pokemon.id}</h2>
             <h2 class="pokemon-name">${pokemon.name}</h2>
@@ -15,7 +15,7 @@ function getPokemonCards(pokemon) {
         </footer>
     </section>
     `;
-};
+}
 
 function getPokemomType(type) {
     return`
@@ -23,4 +23,20 @@ function getPokemomType(type) {
         <img class="poke-type-logo-${type}" src="./assets/icons/${type}.svg" alt="Pokemon Type ${type}">
     </div>
     `
+}
+
+function getPokemonDialog() {
+    return `
+    <section class="">
+        <header class="dialog-header poke-type-${pokemon.types[0]}">
+            
+        </header>
+        <main class="dialog-main ">
+            
+        </main>
+        <footer class="dialog-footer">
+            
+        </footer>
+    </section>
+    `;
 }
