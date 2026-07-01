@@ -17,6 +17,25 @@
 .poke-type-flying   { background-color: #A1BBEC; }
 .poke-type-steel   { background-color: #5795A3; }
 
+.poke-type-fire-shadow   { box-shadow: 0 10px 20px #FBA64C; }
+.poke-type-water-shadow  { box-shadow: 0 10px 20px #539DDF; }
+.poke-type-grass-shadow  { box-shadow: 0 10px 20px #60BD58; }
+.poke-type-bug-shadow   { box-shadow: 0 10px 20px #92BD2D; }
+.poke-type-normal-shadow   { box-shadow: 0 10px 20px #A0A29F; }
+.poke-type-poison-shadow   { box-shadow: 0 10px 20px #B763CF; }
+.poke-type-electric-shadow   { box-shadow: 0 10px 20px #F2D94E; }
+.poke-type-ground-shadow   { box-shadow: 0 10px 20px #DA7C4D; }
+.poke-type-fairy-shadow   { box-shadow: 0 10px 20px #EF90E6; }
+.poke-type-fighting-shadow   { box-shadow: 0 10px 20px #D3425F; }
+.poke-type-psychic-shadow   { box-shadow: 0 10px 20px #FA8582; }
+.poke-type-rock-shadow   { box-shadow: 0 10px 20px #C9BC8A; }
+.poke-type-ghost-shadow   { box-shadow: 0 10px 20px #5F6DBC; }
+.poke-type-ice-shadow   { box-shadow: 0 10px 20px #76D1C1; }
+.poke-type-dragon-shadow   { box-shadow: 0 10px 20px #0C6AC8; }
+.poke-type-dark-shadow   { box-shadow: 0 10px 20px #595761; }
+.poke-type-flying-shadow   { box-shadow: 0 10px 20px #A1BBEC; }
+.poke-type-steel-shadow   { box-shadow: 0 10px 20px #5795A3; }
+
 .poke-type-logo-fire     { filter: invert(64%) sepia(56%) saturate(267%) hue-rotate(350deg) brightness(150%) contrast(198%); }
 .poke-type-logo-water    {  filter: invert(62%) sepia(31%) saturate(635%) hue-rotate(167deg) brightness(138%) contrast(123%); }
 .poke-type-logo-grass    { filter: invert(70%) sepia(67%) saturate(306%) hue-rotate(68deg) brightness(180%) contrast(112%); }

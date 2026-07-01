@@ -118,7 +118,7 @@ function hideLoadButton() {
 function getPokemonTypeIcons(pokemon) {
     let icons = '';
     for (let i = 0; i < pokemon.types.length; i++) {
-        icons += getPokemomType(pokemon.types[i]);
+        icons += getPokemonType(pokemon.types[i]);
     }
     return icons;
 }
