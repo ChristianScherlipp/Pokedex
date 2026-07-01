@@ -7,6 +7,12 @@
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
 }
 
+.pekedex-card:hover > main > img{
+    transform: scale(1.5);
+    transition: all 1.5s ease-in-out;
+
+}
+
 .card-header {
     width: 100%;
     height: 25%;
@@ -58,6 +64,13 @@
                 rgb(57, 97, 243) 70%,
                 rgb(54, 65, 233) 80%);
     border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.card-footer-type{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
 }
 
 .poke-type-bg {
