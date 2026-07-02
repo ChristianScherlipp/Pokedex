@@ -67,11 +67,9 @@ async function fetchPokemonList(limit, offset) {
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
         const data = await response.json();
-
         if (totalPokemonCount === null) {
             totalPokemonCount = data.count;
         }
-
         return data.results;
     } catch (error) {
         console.error('Fehler beim Laden der Pokemon-Liste:', error);
@@ -83,14 +81,11 @@ async function fetchPokemonDetails(url) {
     try {
         const response = await fetch(url);
         const data = await response.json();
-
         const types = [];
         for (let i = 0; i < data.types.length; i++) {
             types.push(data.types[i].type.name);
         }
-
         if (types.length === 0) return null; // Absicherung falls API keine Typen liefert
-
         return {
             id:    String(data.id).padStart(3, '0'),
             name:  data.name,
