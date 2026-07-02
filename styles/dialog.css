@@ -1,14 +1,17 @@
-/* -------- dialog-header ----------------------------------*/
 .dialog-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 22rem;
     height: 40rem;
     border: transparent;
     border-radius: 1rem;
 }
-
+/* -------- dialog-header ----------------------------------*/
 .dialog-header{
     width: 100%;
-    height: 35%;
+    height: 40%;
     background-image: url(../assets/icons/pokeball.svg);
     background-repeat: no-repeat;
     background-position: center;
@@ -27,13 +30,21 @@
 
 .dialog-header-logo-pokemon {
     width: 100%;
+    height: 80%;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
 }
 
 .poke-type-area {
     display: flex;
+    align-items: center;
     gap: 5px;
+    margin-left: 0.5rem;
+}
+
+.pokemon-img {
+    width: 65%;
+    height: 100%;
 }
 /* ----------dialog-main-----------------------------------*/
 .dialog-main{
@@ -137,4 +148,217 @@
 
     color:#111827;
 }
+/* ----------dialog-card: Positionierungs-Kontext + Backdrop ----*/
+.dialog-card-stats {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dialog-card-stats::backdrop {
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+/* ----------dialog close button----------------------------*/
+.dialog-close-btn {
+    position: absolute;
+    top: 1.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+    z-index: 1;
+}
+
+.dialog-close-btn:hover {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+/* ----------dialog-main: Tab-Inhalte -------------------------*/
+.dialog-main {
+    overflow-y: auto;
+}
+
+.dialog-tab-section {
+    display: none;
+    padding: 1rem 0.625rem 0;
+}
+
+.dialog-tab-section.active {
+    display: block;
+    animation: dialog-tab-fade .25s ease;
+}
+
+@keyframes dialog-tab-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.dialog-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgb(91, 102, 118);
+    font-size: 1rem;
+}
+
+/* ----------Tab: About----------------------------------------*/
+.pokemon-genus {
+    font-size: .8rem;
+    font-weight: 600;
+    color: rgb(91, 102, 118);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin: 0 0 .4rem;
+}
+
+.pokemon-description {
+    font-size: .9rem;
+    line-height: 1.4;
+    color: #374151;
+    margin: 0 0 1rem;
+}
+
+.about-grid {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.about-row {
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem .75rem;
+    background: white;
+    border-radius: .75rem;
+    box-shadow: inset 2px 2px 4px rgba(163,177,198,.35),
+                inset -2px -2px 4px rgba(255,255,255,.7);
+}
+
+.about-label {
+    font-size: .8rem;
+    color: rgb(91, 102, 118);
+}
+
+.about-value {
+    font-size: .85rem;
+    font-weight: 600;
+    color: #111827;
+    text-align: right;
+}
+
+/* ----------Tab: Base stats-------------------------------------*/
+.stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.stat-row {
+    display: grid;
+    grid-template-columns: 3.5rem 2rem 1fr;
+    align-items: center;
+    gap: .5rem;
+}
+
+.stat-name {
+    font-size: .75rem;
+    color: rgb(91, 102, 118);
+}
+
+.stat-value {
+    font-size: .8rem;
+    font-weight: 600;
+    color: #111827;
+    text-align: right;
+}
+
+.stat-bar-bg {
+    height: .5rem;
+    border-radius: 999px;
+    background: rgb(221, 229, 236);
+    box-shadow: inset 2px 2px 4px rgba(163,177,198,.5);
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+/* ----------Tab: Evolution---------------------------------------*/
+.evolution-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.evolution-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+}
+
+.evolution-img {
+    width: 4rem;
+    height: 4rem;
+    object-fit: contain;
+}
+
+.evolution-name {
+    font-size: .75rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.evolution-arrow {
+    font-size: 1.1rem;
+    color: rgb(91, 102, 118);
+}
+
+.no-evolution,
+.no-moves {
+    font-size: .85rem;
+    color: rgb(91, 102, 118);
+    text-align: center;
+    padding: 1rem 0;
+}
+
+/* ----------Tab: Moves---------------------------------------*/
+.moves-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.move-chip {
+    font-size: .75rem;
+    padding: .35rem .7rem;
+    border-radius: 999px;
+    background: white;
+    color: #374151;
+    box-shadow: 2px 2px 5px rgba(163,177,198,.4),
+                -2px -2px 5px rgba(255,255,255,.8);
+}
+
 /* ----------dialog-footer---------------------------------*/
+.dialog-footer{
+    width: 100%;
+    height: 10%;
+}

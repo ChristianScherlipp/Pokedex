@@ -5,12 +5,12 @@
     border-radius: 0.75rem;
     border: transparent;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
 }
 
 .pekedex-card:hover > main > img{
     transform: scale(1.3);
-    transition: all 1.5s ease-in-out;
-
+    transition: all 755ms ease-in-out;
 }
 
 .card-header {
