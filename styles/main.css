@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 80%;
 }
 
 h1 {
@@ -22,11 +23,23 @@ h1 {
 }
 
 .not-found {
-    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
+    gap: 2rem;
     font-size: 32px;
     padding: 40px;
     font-weight: bold;
+    color: white;
+}
+
+.not-found > img {
+    width: 18rem;
+    height: 24rem;
+    filter: invert(1);
 }
 
 .dialog-content-body {

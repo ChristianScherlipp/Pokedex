@@ -8,7 +8,7 @@ function getPokemonCards(pokemon) {
     return `
     <button onclick="openPokemonDialog('${pokemon.name}')" class="pekedex-card">
         <header class="card-header">
-            <h2 class="pokemon-number">${pokemon.id}</h2>
+            <h2 class="pokemon-number">#${pokemon.id}</h2>
             <h2 class="pokemon-name">${pokemon.displayName}</h2>
         </header>
         <main class="card-main poke-type-${pokemon.mainType}">
@@ -162,4 +162,13 @@ function getPokemonNoMoves() {
 
 function getMoveChip(text) {
     return `<span class="move-chip">${text}</span>`;
+}
+
+function getNotFound() {
+    return`
+        <div class="not-found">
+            <img src="./assets/icons/search.svg" alt="Bild ein lupe">
+            <p>Pokemon not found</p>
+        </div>
+    `;
 }

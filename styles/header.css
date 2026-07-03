@@ -26,6 +26,16 @@
     justify-content: center;
     align-items: center;
     margin-right: 1.25rem;
+
+}
+
+.search > input {
+    width: 10rem;
+    height: 1.5rem;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    border: transparent;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
 }
 
 @media screen and (min-width: 1280px){

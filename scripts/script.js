@@ -64,7 +64,7 @@ async function fetchPokemonCardData(url) {
     if (types.length === 0) return null; // Absicherung falls API keine Typen liefert
 
     return {
-        id: String(data.id).padStart(3, '0'),
+        id: String(data.id).padStart(4, '0'),
         name: data.name,
         img: data.sprites.other.dream_world.front_default || data.sprites.front_default,
         types: types,
@@ -208,7 +208,7 @@ async function loadFullPokemonData(identifier) {
     }
 
     return {
-        id: String(details.id).padStart(3, '0'),
+        id: String(details.id).padStart(4, '0'),
         name: details.name,
         img: details.img,
         types: details.types,
@@ -423,37 +423,30 @@ function searchPokemon() {
         .value
         .toLowerCase()
         .trim();
-
     const contentArea = document.getElementById('pokedex-content-area');
-
     // weniger als 3 Zeichen -> normale Anzeige zurück
     if (searchInput.length < 3) {
         renderAllLoadedPokemon();
         return;
     }
-
     const allPokemon = Object.values(pokemonCache);
-
     const filteredPokemon = allPokemon.filter((pokemon) =>
         pokemon.name.toLowerCase().includes(searchInput)
     );
-
     // nichts gefunden
     if (filteredPokemon.length === 0) {
-        contentArea.innerHTML = `
-            <div class="not-found">
-                Pokemon not found
-            </div>
-        `;
+        contentArea.innerHTML = `${getNotFound()}`;
+        document.getElementById('moreCards').classList.add('d-none')
         return;
     }
-
+    document.getElementById('moreCards').classList.add('d-none')
     renderSearchResults(filteredPokemon);
 }
 
 function renderAllLoadedPokemon() {
     const allPokemon = Object.values(pokemonCache);
     renderSearchResults(allPokemon);
+    document.getElementById('moreCards').classList.remove('d-none')
 }
 
 function renderSearchResults(results) {
@@ -464,6 +457,6 @@ function renderSearchResults(results) {
     for (let i = 0; i < results.length; i++) {
         html += getPokemonCards(buildCardView(results[i]));
     }
-
+    document.getElementById('moreCards').classList.add('d-none')
     contentArea.innerHTML = html;
 }
