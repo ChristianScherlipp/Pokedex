@@ -1,5 +1,5 @@
 let offset = 0;
-const BATCH_SIZE = 20;
+const BATCH_SIZE = 500;
 const pokemonCache = {};        // Rohdaten: id, name, img, types
 const pokemonDetailCache = {};  // volle Daten fuer den Dialog: height, weight, abilities, stats, moves
 const speciesCache = {};        // Beschreibung, Kategorie, Evolution-Link
@@ -128,6 +128,8 @@ async function openPokemonDialog(identifier) {
     dialogArea.innerHTML = getPokemonDialogLoading();
     dialogArea.querySelector('dialog').showModal();
 
+    document.body.classList.add('dialog-open');
+
     const pokemon = await loadFullPokemonData(identifier);
 
     if (!pokemon) {
@@ -138,6 +140,10 @@ async function openPokemonDialog(identifier) {
     dialogArea.innerHTML = getPokemonDialog(buildDialogView(pokemon));
     const dialog = dialogArea.querySelector('dialog');
     dialog.showModal();
+
+    dialog.addEventListener('close', () => {
+    document.body.classList.remove('dialog-open');
+});
 
     // Ersten Tab aktiv setzen: Content anzeigen + Hash auf #link-1, damit
     // die :target-Hervorhebung in der Nav (dialog.css) direkt passt, ohne
@@ -166,6 +172,7 @@ async function navigatePokemonDialog(id) {
 function closePokemonDialog() {
     const dialog = document.querySelector('#dialog-content-area dialog');
     if (dialog) dialog.close();
+    document.body.classList.remove('dialog-open');
 }
 
 // Wechselt zwischen den Tabs "About", "Base stats", "Evolution" und "Moves".
