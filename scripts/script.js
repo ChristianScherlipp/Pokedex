@@ -1,5 +1,5 @@
 let offset = 0;
-const BATCH_SIZE = 25;
+const BATCH_SIZE = 20;
 const pokemonCache = {};        // Rohdaten: id, name, img, types
 const pokemonDetailCache = {};  // volle Daten fuer den Dialog: height, weight, abilities, stats, moves
 const speciesCache = {};        // Beschreibung, Kategorie, Evolution-Link
@@ -119,15 +119,16 @@ function hideLoadButton() {
 
 /* ============================= Dialog ============================= */
 
-// Wird per onclick auf einer Karte aufgerufen: zeigt Ladezustand, holt alle
-// Daten fuer den Dialog und rendert ihn dann fertig
-async function openPokemonDialog(name) {
+// Wird per onclick auf einer Karte (mit Namen) oder einem Prev/Next-Button
+// (mit ID) aufgerufen: zeigt Ladezustand, holt alle Daten fuer den Dialog
+// und rendert ihn dann fertig
+async function openPokemonDialog(identifier) {
     const dialogArea = document.getElementById('dialog-content-area');
 
     dialogArea.innerHTML = getPokemonDialogLoading();
     dialogArea.querySelector('dialog').showModal();
 
-    const pokemon = await loadFullPokemonData(name);
+    const pokemon = await loadFullPokemonData(identifier);
 
     if (!pokemon) {
         closePokemonDialog();
@@ -148,6 +149,18 @@ async function openPokemonDialog(name) {
     dialog.addEventListener('click', (event) => {
         if (event.target === dialog) closePokemonDialog();
     });
+}
+
+// Wird von den Vorherige/Naechste-Buttons im Dialog-Footer aufgerufen.
+// Oeffnet einfach den Dialog neu mit der Ziel-ID - openPokemonDialog laedt
+// die Daten dafuer selbststaendig nach, auch wenn diese ID noch nie als
+// Karte gerendert wurde. Die Ziel-ID selbst kommt bereits mit Rundlauf aus
+// buildDialogView(), hier nur nochmal defensiv gegen die sichtbaren Karten
+// (offset) abgesichert.
+async function navigatePokemonDialog(id) {
+    if (!id || id < 1) return;
+    if (id > offset) return;
+    await openPokemonDialog(id);
 }
 
 function closePokemonDialog() {
@@ -171,25 +184,24 @@ function switchDialogTab(tab) {
 
 /* ---------------------- Datenbeschaffung fuer den Dialog ---------------------- */
 
-// Sammelt alle Daten, die der Dialog braucht: Kartendaten, Detaildaten,
-// Species-Infos und die Evolution-Kette
-async function loadFullPokemonData(name) {
-    const base = pokemonCache[name];
-    if (!base) return null;
-
-    const details = await getPokemonDetailData(name);
+// Sammelt alle Daten, die der Dialog braucht: Detaildaten, Species-Infos und
+// die Evolution-Kette. identifier kann ein Name ("pikachu") oder eine ID (25) sein.
+async function loadFullPokemonData(identifier) {
+    const details = await getPokemonDetailData(identifier);
     if (!details) return null;
 
     const species = await getSpeciesData(details.id);
-    console.log(species);
-    
+
     let evolutionChain = [];
     if (species && species.evolutionChainUrl) {
         evolutionChain = await getEvolutionChainData(species.evolutionChainUrl);
     }
 
     return {
-        ...base,
+        id: String(details.id).padStart(3, '0'),
+        name: details.name,
+        img: details.img,
+        types: details.types,
         height: details.height,
         weight: details.weight,
         abilities: details.abilities,
@@ -201,16 +213,25 @@ async function loadFullPokemonData(name) {
     };
 }
 
-// Holt & normalisiert die vollen Pokemon-Daten (Groesse, Gewicht, Faehigkeiten,
-// Stats, Attacken), mit Cache
-async function getPokemonDetailData(name) {
-    if (pokemonDetailCache[name]) return pokemonDetailCache[name];
+// Holt & normalisiert die vollen Pokemon-Daten (Name, Bild, Typen, Groesse,
+// Gewicht, Faehigkeiten, Stats, Attacken), mit Cache. Funktioniert sowohl mit
+// einem Namen ("pikachu") als auch mit einer ID (25) als identifier.
+async function getPokemonDetailData(identifier) {
+    if (pokemonDetailCache[identifier]) return pokemonDetailCache[identifier];
 
-    const data = await fetchPokemonByName(name);
+    const data = await fetchPokemonByName(identifier);
     if (!data) return null;
+
+    // Falls dieses Pokemon unter dem jeweils anderen Identifier (Name <-> ID)
+    // bereits gecached wurde, den bestehenden Eintrag wiederverwenden
+    if (pokemonDetailCache[data.name]) return pokemonDetailCache[data.name];
+    if (pokemonDetailCache[data.id]) return pokemonDetailCache[data.id];
 
     const detail = {
         id: data.id,
+        name: data.name,
+        img: data.sprites.other.dream_world.front_default || data.sprites.front_default,
+        types: data.types.map((t) => t.type.name),
         height: (data.height / 10).toFixed(1),   // Dezimeter -> Meter
         weight: (data.weight / 10).toFixed(1),    // Hektogramm -> Kilogramm
         abilities: data.abilities.map((a) => a.ability.name),
@@ -218,7 +239,8 @@ async function getPokemonDetailData(name) {
         moves: data.moves.slice(0, 16).map((m) => m.move.name),
     };
 
-    pokemonDetailCache[name] = detail;
+    pokemonDetailCache[data.name] = detail;
+    pokemonDetailCache[data.id] = detail;
     return detail;
 }
 
@@ -281,7 +303,15 @@ function getIdFromSpeciesUrl(url) {
 /* ---------------------- View-Modelle fuer die Dialog-Templates ---------------------- */
 
 // Baut alle fertigen Werte/Strings, die getPokemonDialog() direkt einsetzen kann
-function buildDialogView(pokemon) {    
+function buildDialogView(pokemon) {
+    const numericId = parseInt(pokemon.id, 10);
+    const lastVisibleId = offset; // Anzahl der aktuell geladenen/sichtbaren Karten
+
+    // Rundlauf: nach der letzten sichtbaren Karte geht es wieder bei der
+    // ersten los, vor der ersten kommt man bei der letzten sichtbaren an
+    const previousId = numericId > 1 ? numericId - 1 : lastVisibleId;
+    const nextId = numericId < lastVisibleId ? numericId + 1 : 1;
+
     return {
         name: pokemon.name,
         displayName: capitalize(pokemon.name),
@@ -293,6 +323,8 @@ function buildDialogView(pokemon) {
         statsHtml: buildStatsHtml(pokemon.stats),
         evolutionHtml: buildEvolutionHtml(pokemon.evolutionChain),
         movesHtml: buildMovesHtml(pokemon.moves),
+        previousId: previousId,
+        nextId: nextId,
     };
 }
 
@@ -336,7 +368,7 @@ function formatStatName(name) {
         'special-attack': 'Sp. Atk',
         'special-defense': 'Sp. Def',
         speed: 'Speed',
-    };    
+    };
     return names[name] || capitalize(name);
 }
 
@@ -356,20 +388,21 @@ function buildEvolutionHtml(chain) {
 }
 
 function buildMovesHtml(moves) {
-    let chipsHtml = '';
     if (!moves || moves.length === 0) {
         return getPokemonNoMoves();
     }
-    for (let i = 0; i < moves.length; i++) {       
+
+    let chipsHtml = '';
+    for (let i = 0; i < moves.length; i++) {
         chipsHtml += getMoveChip(formatMoveName(moves[i]));
     }
     return getPokemonMovesTab(chipsHtml);
 }
 
-function formatMoveName(move) {    
+function formatMoveName(move) {
     return capitalize(move.replace(/-/g, ' '));
 }
 
-function capitalize(str) {    
+function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }

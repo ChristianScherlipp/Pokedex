@@ -8,3 +8,7 @@ body {
                 rgb(3, 31, 131) 70%,
                 rgb(0, 6, 97) 80%);
 }
+
+body.dialog-open {
+    overflow: hidden;
+}

@@ -4,7 +4,7 @@
    Schleifen, keine Bedingungen - das passiert alles in script.js.
    ============================================================ */
 
-function getPokemonCards(pokemon) {    
+function getPokemonCards(pokemon) {
     return `
     <button onclick="openPokemonDialog('${pokemon.name}')" class="pekedex-card">
         <header class="card-header">
@@ -41,7 +41,7 @@ function getPokemonDialogLoading() {
     `;
 }
 
-function getPokemonDialog(view) {    
+function getPokemonDialog(view) {
     return `
     <dialog class="dialog-card poke-type-${view.mainType}-shadow">
         <button class="dialog-close-btn" onclick="closePokemonDialog()" aria-label="Schließen">✕</button>
@@ -65,29 +65,31 @@ function getPokemonDialog(view) {
                     <a href="#link-3" id="link-3" data-tab="evolution" onclick="switchDialogTab('evolution')">Evolution</a>
                     <a href="#link-4" id="link-4" data-tab="moves" onclick="switchDialogTab('moves')">Moves</a>
                 </nav>
+
             </section>
             <section class="dialog-tab-section active" data-tab="about">
-                    ${view.aboutHtml}
-                </section>
-                <section class="dialog-tab-section" data-tab="stats">
-                    ${view.statsHtml}
-                </section>
-                <section class="dialog-tab-section" data-tab="evolution">
-                    ${view.evolutionHtml}
-                </section>
-                <section class="dialog-tab-section" data-tab="moves">
-                    ${view.movesHtml}
-                </section>
+                ${view.aboutHtml}
+            </section>
+            <section class="dialog-tab-section" data-tab="stats">
+                ${view.statsHtml}
+            </section>
+            <section class="dialog-tab-section" data-tab="evolution">
+                ${view.evolutionHtml}
+            </section>
+            <section class="dialog-tab-section" data-tab="moves">
+                ${view.movesHtml}
+            </section>
         </main>
         <footer class="dialog-footer">
-            
+            <button class="dialog-nav-btn dialog-nav-prev" onclick="navigatePokemonDialog(${view.previousId})">‹ Zurück</button>
+            <button class="dialog-nav-btn dialog-nav-next" onclick="navigatePokemonDialog(${view.nextId})">Weiter ›</button>
         </footer>
     </dialog>
     `;
 }
 
 // --- Tab: About ---
-function getPokemonAboutTab(view) {    
+function getPokemonAboutTab(view) {
     return `
     <div class="about-content">
         ${view.genusHtml}

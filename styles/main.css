@@ -38,10 +38,20 @@ h1 {
     padding: 12px 24px;
     cursor: pointer;
     font-size: 18px;
+    background: linear-gradient(-90deg,
+                rgb(54, 65, 233) 20%,
+                rgb(57, 97, 243) 30%,
+                rgb(50, 148, 253) 45%,
+                rgb(101, 177, 253) 50%,
+                rgb(50, 148, 253) 55%,
+                rgb(57, 97, 243) 70%,
+                rgb(54, 65, 233) 80%);
+    border-radius: 0.75rem 0.75rem;
 }
 
 #load-more-btn:disabled {
     cursor: not-allowed;
+    
     opacity: 0.6;
 }
 
