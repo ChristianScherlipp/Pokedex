@@ -13,11 +13,20 @@ h1 {
 
 .main-body-card {
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     padding: 2rem;
     gap: 1rem;
+}
+
+.not-found {
+    height: 100%;
+    text-align: center;
+    font-size: 32px;
+    padding: 40px;
+    font-weight: bold;
 }
 
 .dialog-content-body {
