@@ -8,7 +8,9 @@
     cursor: pointer;
 }
 
-.pekedex-card:hover > main > img{
+.pekedex-card:hover > main > img,
+.pekedex-card:focus-visible > main > img
+    {
     transform: scale(1.3);
     transition: all 755ms ease-in-out;
 }
