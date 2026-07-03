@@ -359,6 +359,41 @@
 
 /* ----------dialog-footer---------------------------------*/
 .dialog-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
     height: 10%;
+    padding: 0 1rem;
+}
+
+.dialog-nav-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 3px solid black;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+.dialog-nav-prev:active span {
+    display: inline-block;
+    animation: spin 255ms linear infinite;
+}
+
+.dialog-nav-next:active span {
+    display: inline-block;
+    animation: spin2 255ms linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin2 {
+    100% {
+        transform: rotate(-360deg);
+    }
 }

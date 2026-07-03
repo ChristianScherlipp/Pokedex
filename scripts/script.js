@@ -1,5 +1,5 @@
 let offset = 0;
-const BATCH_SIZE = 500;
+const BATCH_SIZE = 25;
 const pokemonCache = {};        // Rohdaten: id, name, img, types
 const pokemonDetailCache = {};  // volle Daten fuer den Dialog: height, weight, abilities, stats, moves
 const speciesCache = {};        // Beschreibung, Kategorie, Evolution-Link

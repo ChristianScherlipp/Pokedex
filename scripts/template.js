@@ -81,8 +81,8 @@ function getPokemonDialog(view) {
             </section>
         </main>
         <footer class="dialog-footer">
-            <button class="dialog-nav-btn dialog-nav-prev" onclick="navigatePokemonDialog(${view.previousId})">‹ Zurück</button>
-            <button class="dialog-nav-btn dialog-nav-next" onclick="navigatePokemonDialog(${view.nextId})">Weiter ›</button>
+            <button class="dialog-nav-btn dialog-nav-prev" onclick="navigatePokemonDialog(${view.previousId})"><span>↩</span></button>
+            <button class="dialog-nav-btn dialog-nav-next" onclick="navigatePokemonDialog(${view.nextId})"><span>↪</span></button>
         </footer>
     </dialog>
     `;
