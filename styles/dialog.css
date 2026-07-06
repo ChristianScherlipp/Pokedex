@@ -122,16 +122,12 @@
 
 .dialog-main-nav a{
     text-decoration:none;
-
     color:rgb(91, 102, 118);
-
     border-radius: 62.4275rem;
-
     font-size:1rem;
-
     transition:.3s;
-
     position:relative;
+    padding: 0 0.5rem;
 }
 
 .dialog-main-nav a:hover{

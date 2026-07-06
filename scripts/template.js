@@ -56,7 +56,7 @@ function getPokemonDialog(view) {
             <section class="wrapper">
                 <nav class="dialog-main-nav">
                     <a href="#link-1" id="link-1" data-tab="about" onclick="switchDialogTab('about')">About</a>
-                    <a href="#link-2" id="link-2" data-tab="stats" onclick="switchDialogTab('stats')">Base stats</a>
+                    <a href="#link-2" id="link-2" data-tab="stats" onclick="switchDialogTab('stats')">Stats</a>
                     <a href="#link-3" id="link-3" data-tab="evolution" onclick="switchDialogTab('evolution')">Evolution</a>
                     <a href="#link-4" id="link-4" data-tab="moves" onclick="switchDialogTab('moves')">Moves</a>
                 </nav>
