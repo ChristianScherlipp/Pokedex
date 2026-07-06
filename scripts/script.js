@@ -1,11 +1,13 @@
 let offset = 0;
 const BATCH_SIZE = 25;
-const pokemonCache = {};        // Rohdaten: id, name, img, types
-const pokemonDetailCache = {};  // volle Daten fuer den Dialog: height, weight, abilities, stats, moves
-const speciesCache = {};        // Beschreibung, Kategorie, Evolution-Link
-const evolutionCache = {};      // aufbereitete Evolution-Ketten
+const pokemonCache = {};
+const pokemonDetailCache = {};
+const speciesCache = {};
+const evolutionCache = {};
 let isLoading = false;
 let totalPokemonCount = null;
+let isFirstLoad = true;
+const MIN_LOADING_SCREEN_MS = 1000;
 
 function init() {
     loadPokemonBatch();
@@ -15,36 +17,61 @@ function init() {
 }
 
 async function loadPokemonBatch() {
-    if (isLoading) return;
-
-    isLoading = true;
-    updateLoadButton(true);
-
+    const firstLoadStartTime = isFirstLoad ? Date.now() : null;
     const listData = await fetchPokemonList(BATCH_SIZE, offset);
-
+    
+    if (isLoading) return;
+    beginLoading();
     if (!listData || listData.results.length === 0) {
-        hideLoadButton();
-        isLoading = false;
+        finishBatchLoad(firstLoadStartTime, true);
         return;
     }
+    await processPokemonBatch(listData);
+    finishBatchLoad(firstLoadStartTime, false);
+}
+
+function beginLoading() {
+    isLoading = true;
+    updateLoadButton(true);
+}
+
+async function processPokemonBatch(listData) {
+    const results = await fetchPokemonCardDataBatch(listData.results);
 
     if (totalPokemonCount === null) {
         totalPokemonCount = listData.count;
     }
-
-    const results = await fetchPokemonCardDataBatch(listData.results);
     renderPokemonBatch(results);
-
     offset += listData.results.length;
     checkAndHideButton();
-
-    isLoading = false;
-    updateLoadButton(false);
 }
 
-// Holt die Kartendaten fuer eine Liste von Pokemon (parallel, mit Cache)
+function finishBatchLoad(firstLoadStartTime, hasNoResults) {
+    if (hasNoResults) {
+        hideLoadButton();
+    } else {
+        updateLoadButton(false);
+    }
+    isLoading = false;
+    finishFirstLoad(firstLoadStartTime);
+}
+
+function finishFirstLoad(firstLoadStartTime) {
+    const screen = document.getElementById('app-loading-screen');
+    const elapsed = Date.now() - firstLoadStartTime;
+    const remaining = Math.max(0, MIN_LOADING_SCREEN_MS - elapsed);
+
+    if (!isFirstLoad) return;
+    isFirstLoad = false;
+    if (!screen) return;
+    setTimeout(() => {
+        screen.classList.add('app-loading-screen-hidden');
+    }, remaining);
+}
+
 async function fetchPokemonCardDataBatch(pokemonList) {
     const detailPromises = [];
+
     for (let i = 0; i < pokemonList.length; i++) {
         if (pokemonCache[pokemonList[i].name]) {
             detailPromises.push(Promise.resolve(pokemonCache[pokemonList[i].name]));
@@ -55,14 +82,12 @@ async function fetchPokemonCardDataBatch(pokemonList) {
     return await Promise.all(detailPromises);
 }
 
-// Baut die schlanken Kartendaten (id, name, img, types) aus den API-Rohdaten
 async function fetchPokemonCardData(url) {
     const data = await fetchPokemonDetails(url);
-    if (!data) return null;
-
     const types = data.types.map((t) => t.type.name);
-    if (types.length === 0) return null; // Absicherung falls API keine Typen liefert
 
+    if (!data) return null;
+    if (types.length === 0) return null; // Absicherung falls API keine Typen liefert
     return {
         id: String(data.id).padStart(4, '0'),
         name: data.name,
@@ -71,9 +96,9 @@ async function fetchPokemonCardData(url) {
     };
 }
 
-// Baut alle Karten als einen HTML-String und schreibt sie einmal ins DOM
 function renderPokemonBatch(results) {
     let html = '';
+
     for (let i = 0; i < results.length; i++) {
         if (results[i] === null) continue;
         pokemonCache[results[i].name] = results[i];
@@ -82,7 +107,6 @@ function renderPokemonBatch(results) {
     document.getElementById('pokedex-content-area').innerHTML += html;
 }
 
-// Bereitet ein Pokemon fuer die Card-Template auf (Anzeigename, Typ-Icons)
 function buildCardView(pokemon) {
     return {
         id: pokemon.id,
@@ -94,16 +118,15 @@ function buildCardView(pokemon) {
     };
 }
 
-// Baut die Icon-Reihe fuer eine Liste von Typen
 function buildTypeIconsHtml(types) {
     let html = '';
+
     for (let i = 0; i < types.length; i++) {
         html += getPokemonType(types[i]);
     }
     return html;
 }
 
-// Versteckt den Button wenn alle Pokemon geladen wurden
 function checkAndHideButton() {
     if (totalPokemonCount !== null && offset >= totalPokemonCount) {
         hideLoadButton();
@@ -112,6 +135,7 @@ function checkAndHideButton() {
 
 function updateLoadButton(loading) {
     const button = document.getElementById('load-more-btn');
+
     button.disabled = loading;
     button.innerText = loading ? 'Lädt...' : 'Mehr laden';
 }
@@ -119,53 +143,45 @@ function updateLoadButton(loading) {
 function hideLoadButton() {
     document.getElementById('load-more-btn').classList.add('hidden');
 }
-
 /* ============================= Dialog ============================= */
-
-// Wird per onclick auf einer Karte (mit Namen) oder einem Prev/Next-Button
-// (mit ID) aufgerufen: zeigt Ladezustand, holt alle Daten fuer den Dialog
-// und rendert ihn dann fertig
 async function openPokemonDialog(identifier) {
     const dialogArea = document.getElementById('dialog-content-area');
-
-    dialogArea.innerHTML = getPokemonDialogLoading();
-    dialogArea.querySelector('dialog').showModal();
-
-    document.body.classList.add('dialog-open');
-
     const pokemon = await loadFullPokemonData(identifier);
+    const dialog = renderPokemonDialog(dialogArea, pokemon);
 
+    showLoadingDialog(dialogArea);
     if (!pokemon) {
         closePokemonDialog();
         return;
     }
+    attachDialogListeners(dialog);
+}
+
+function showLoadingDialog(dialogArea) {
+    dialogArea.innerHTML = getPokemonDialogLoading();
+    dialogArea.querySelector('dialog').showModal();
+    document.body.classList.add('dialog-open');
+}
+
+function renderPokemonDialog(dialogArea, pokemon) {
+    const dialog = dialogArea.querySelector('dialog');
 
     dialogArea.innerHTML = getPokemonDialog(buildDialogView(pokemon));
-    const dialog = dialogArea.querySelector('dialog');
     dialog.showModal();
-
-    dialog.addEventListener('close', () => {
-    document.body.classList.remove('dialog-open');
-});
-
-    // Ersten Tab aktiv setzen: Content anzeigen + Hash auf #link-1, damit
-    // die :target-Hervorhebung in der Nav (dialog.css) direkt passt, ohne
-    // dass ein Scroll-Sprung oder ein neuer History-Eintrag entsteht
     switchDialogTab('about');
     history.replaceState(null, '', '#link-1');
+    return dialog;
+}
 
-    // Dialog schliessen bei Klick auf den Backdrop (ausserhalb der Karte)
+function attachDialogListeners(dialog) {
+    dialog.addEventListener('close', () => {
+        document.body.classList.remove('dialog-open');
+    });
     dialog.addEventListener('click', (event) => {
         if (event.target === dialog) closePokemonDialog();
     });
 }
 
-// Wird von den Vorherige/Naechste-Buttons im Dialog-Footer aufgerufen.
-// Oeffnet einfach den Dialog neu mit der Ziel-ID - openPokemonDialog laedt
-// die Daten dafuer selbststaendig nach, auch wenn diese ID noch nie als
-// Karte gerendert wurde. Die Ziel-ID selbst kommt bereits mit Rundlauf aus
-// buildDialogView(), hier nur nochmal defensiv gegen die sichtbaren Karten
-// (offset) abgesichert.
 async function navigatePokemonDialog(id) {
     if (!id || id < 1) return;
     if (id > offset) return;
@@ -178,35 +194,30 @@ function closePokemonDialog() {
     document.body.classList.remove('dialog-open');
 }
 
-// Wechselt zwischen den Tabs "About", "Base stats", "Evolution" und "Moves".
-// Die Nav-Hervorhebung selbst (der gleitende Pill-Effekt) uebernimmt die
-// :target-CSS in dialog.css, sobald der Klick den Hash aendert - hier wird
-// nur der passende Inhalt sichtbar geschaltet.
 function switchDialogTab(tab) {
     const dialog = document.querySelector('#dialog-content-area dialog');
-    if (!dialog) return;
-
     const sections = dialog.querySelectorAll('.dialog-tab-section');
+    if (!dialog) return;
     for (let i = 0; i < sections.length; i++) {
         sections[i].classList.toggle('active', sections[i].dataset.tab === tab);
     }
 }
-
-/* ---------------------- Datenbeschaffung fuer den Dialog ---------------------- */
-
-// Sammelt alle Daten, die der Dialog braucht: Detaildaten, Species-Infos und
-// die Evolution-Kette. identifier kann ein Name ("pikachu") oder eine ID (25) sein.
+/* ---------------------- Data acquisition for the dialog ---------------------- */
 async function loadFullPokemonData(identifier) {
     const details = await getPokemonDetailData(identifier);
+    const species = await getSpeciesData(details.id);
+    const evolutionChain = await loadEvolutionChainFor(species);
     if (!details) return null;
 
-    const species = await getSpeciesData(details.id);
+    return buildFullPokemonData(details, species, evolutionChain);
+}
 
-    let evolutionChain = [];
-    if (species && species.evolutionChainUrl) {
-        evolutionChain = await getEvolutionChainData(species.evolutionChainUrl);
-    }
+async function loadEvolutionChainFor(species) {
+    if (!species || !species.evolutionChainUrl) return [];
+    return await getEvolutionChainData(species.evolutionChainUrl);
+}
 
+function buildFullPokemonData(details, species, evolutionChain) {
     return {
         id: String(details.id).padStart(4, '0'),
         name: details.name,
@@ -223,21 +234,26 @@ async function loadFullPokemonData(identifier) {
     };
 }
 
-// Holt & normalisiert die vollen Pokemon-Daten (Name, Bild, Typen, Groesse,
-// Gewicht, Faehigkeiten, Stats, Attacken), mit Cache. Funktioniert sowohl mit
-// einem Namen ("pikachu") als auch mit einer ID (25) als identifier.
 async function getPokemonDetailData(identifier) {
-    if (pokemonDetailCache[identifier]) return pokemonDetailCache[identifier];
-
     const data = await fetchPokemonByName(identifier);
+    const cached = getCachedDetailByRawData(data);
+    const detail = buildPokemonDetail(data);
+
+    if (pokemonDetailCache[identifier]) return pokemonDetailCache[identifier];
     if (!data) return null;
+    if (cached) return cached;
 
-    // Falls dieses Pokemon unter dem jeweils anderen Identifier (Name <-> ID)
-    // bereits gecached wurde, den bestehenden Eintrag wiederverwenden
-    if (pokemonDetailCache[data.name]) return pokemonDetailCache[data.name];
-    if (pokemonDetailCache[data.id]) return pokemonDetailCache[data.id];
+    pokemonDetailCache[data.name] = detail;
+    pokemonDetailCache[data.id] = detail;
+    return detail;
+}
 
-    const detail = {
+function getCachedDetailByRawData(data) {
+    return pokemonDetailCache[data.name] || pokemonDetailCache[data.id] || null;
+}
+
+function buildPokemonDetail(data) {
+    return {
         id: data.id,
         name: data.name,
         img: data.sprites.other.dream_world.front_default || data.sprites.front_default,
@@ -248,61 +264,63 @@ async function getPokemonDetailData(identifier) {
         stats: data.stats.map((s) => ({ name: s.stat.name, base: s.base_stat })),
         moves: data.moves.slice(0, 16).map((m) => m.move.name),
     };
-
-    pokemonDetailCache[data.name] = detail;
-    pokemonDetailCache[data.id] = detail;
-    return detail;
 }
 
-// Holt & normalisiert die Species-Daten (Beschreibung, Kategorie, Evolution-Link),
-// mit Cache. Bevorzugt deutsche Texte, faellt auf Englisch zurueck.
 async function getSpeciesData(id) {
-    if (speciesCache[id]) return speciesCache[id];
-
     const data = await fetchPokemonSpecies(id);
+    const species = buildSpeciesData(data);
+
+    if (speciesCache[id]) return speciesCache[id];
     if (!data) return null;
-
-    const flavorEntry =
-        data.flavor_text_entries.find((e) => e.language.name === 'de') ||
-        data.flavor_text_entries.find((e) => e.language.name === 'en');
-
-    const genusEntry =
-        data.genera.find((g) => g.language.name === 'de') ||
-        data.genera.find((g) => g.language.name === 'en');
-
-    const species = {
-        description: flavorEntry ? flavorEntry.flavor_text.replace(/[\f\n\r]/g, ' ') : '',
-        genus: genusEntry ? genusEntry.genus : '',
-        evolutionChainUrl: data.evolution_chain ? data.evolution_chain.url : null,
-    };
 
     speciesCache[id] = species;
     return species;
 }
 
-// Holt & normalisiert die Evolution-Kette als flache Liste (vereinfacht: nur
-// der erste Zweig jeder Verzweigung wird beruecksichtigt), mit Cache
+function findPreferredLanguageEntry(entries) {
+    return entries.find((e) => e.language.name === 'en') ||
+        entries.find((e) => e.language.name === 'de');
+}
+
+function buildSpeciesData(data) {
+    const flavorEntry = findPreferredLanguageEntry(data.flavor_text_entries);
+    const genusEntry = findPreferredLanguageEntry(data.genera);
+
+    return {
+        description: flavorEntry ? flavorEntry.flavor_text.replace(/[\f\n\r]/g, ' ') : '',
+        genus: genusEntry ? genusEntry.genus : '',
+        evolutionChainUrl: data.evolution_chain ? data.evolution_chain.url : null,
+    };
+}
+
 async function getEvolutionChainData(url) {
     if (evolutionCache[url]) return evolutionCache[url];
-
+    const chain = buildEvolutionChainList(data.chain);
     const data = await fetchEvolutionChain(url);
+
     if (!data) return [];
-
-    const chain = [];
-    let node = data.chain;
-
-    while (node) {
-        const id = getIdFromSpeciesUrl(node.species.url);
-        chain.push({
-            id: id,
-            name: node.species.name,
-            img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
-        });
-        node = node.evolves_to[0] || null;
-    }
-
     evolutionCache[url] = chain;
     return chain;
+}
+
+function buildEvolutionChainList(rootNode) {
+    const chain = [];
+    let node = rootNode;
+
+    while (node) {
+        chain.push(buildEvolutionChainItem(node));
+        node = node.evolves_to[0] || null;
+    }
+    return chain;
+}
+
+function buildEvolutionChainItem(node) {
+    const id = getIdFromSpeciesUrl(node.species.url);
+    return {
+        id: id,
+        name: node.species.name,
+        img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+    };
 }
 
 function getIdFromSpeciesUrl(url) {
@@ -310,18 +328,12 @@ function getIdFromSpeciesUrl(url) {
     return parts[parts.length - 1];
 }
 
-/* ---------------------- View-Modelle fuer die Dialog-Templates ---------------------- */
+/* ---------------------- View models for the dialog templates ---------------------- */
 
-// Baut alle fertigen Werte/Strings, die getPokemonDialog() direkt einsetzen kann
 function buildDialogView(pokemon) {
-    const numericId = parseInt(pokemon.id, 10);
-    const lastVisibleId = offset; // Anzahl der aktuell geladenen/sichtbaren Karten
-
-    // Rundlauf: nach der letzten sichtbaren Karte geht es wieder bei der
-    // ersten los, vor der ersten kommt man bei der letzten sichtbaren an
-    const previousId = numericId > 1 ? numericId - 1 : lastVisibleId;
-    const nextId = numericId < lastVisibleId ? numericId + 1 : 1;
-
+    const numericId = parseInt(pokemon.id);
+    const navIds = buildNavIds(numericId);
+    const tabsHtml = buildDialogTabsHtml(pokemon);
     return {
         name: pokemon.name,
         displayName: capitalize(pokemon.name),
@@ -329,12 +341,26 @@ function buildDialogView(pokemon) {
         img: pokemon.img,
         mainType: pokemon.types[0],
         typeIconsHtml: buildTypeIconsHtml(pokemon.types),
+        ...tabsHtml,
+        previousId: navIds.previousId,
+        nextId: navIds.nextId,
+    };
+}
+
+function buildDialogTabsHtml(pokemon) {
+    return {
         aboutHtml: buildAboutHtml(pokemon),
         statsHtml: buildStatsHtml(pokemon.stats),
         evolutionHtml: buildEvolutionHtml(pokemon.evolutionChain),
         movesHtml: buildMovesHtml(pokemon.moves),
-        previousId: previousId,
-        nextId: nextId,
+    };
+}
+
+function buildNavIds(numericId) {
+    const lastVisibleId = offset;
+    return {
+        previousId: numericId > 1 ? numericId - 1 : lastVisibleId,
+        nextId: numericId < lastVisibleId ? numericId + 1 : 1,
     };
 }
 
@@ -383,11 +409,11 @@ function formatStatName(name) {
 }
 
 function buildEvolutionHtml(chain) {
+    let itemsHtml = '';
     if (!chain || chain.length <= 1) {
         return getPokemonNoEvolution();
     }
 
-    let itemsHtml = '';
     for (let i = 0; i < chain.length; i++) {
         itemsHtml += getEvolutionItem({ name: capitalize(chain[i].name), img: chain[i].img });
         if (i < chain.length - 1) {
@@ -398,11 +424,11 @@ function buildEvolutionHtml(chain) {
 }
 
 function buildMovesHtml(moves) {
+    let chipsHtml = '';
     if (!moves || moves.length === 0) {
         return getPokemonNoMoves();
     }
 
-    let chipsHtml = '';
     for (let i = 0; i < moves.length; i++) {
         chipsHtml += getMoveChip(formatMoveName(moves[i]));
     }
@@ -417,46 +443,56 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+/* ============================= Search ============================= */
+
 function searchPokemon() {
-    const searchInput = document
-        .getElementById('main-header-search')
-        .value
-        .toLowerCase()
-        .trim();
-    const contentArea = document.getElementById('pokedex-content-area');
-    // weniger als 3 Zeichen -> normale Anzeige zurück
+    const searchInput = getSearchInputValue();
+    const filteredPokemon = filterPokemonByName(searchInput);
     if (searchInput.length < 3) {
         renderAllLoadedPokemon();
         return;
     }
-    const allPokemon = Object.values(pokemonCache);
-    const filteredPokemon = allPokemon.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(searchInput)
-    );
-    // nichts gefunden
+
+    document.getElementById('moreCards').classList.add('d-none');
     if (filteredPokemon.length === 0) {
-        contentArea.innerHTML = `${getNotFound()}`;
-        document.getElementById('moreCards').classList.add('d-none')
+        showNotFound();
         return;
     }
-    document.getElementById('moreCards').classList.add('d-none')
     renderSearchResults(filteredPokemon);
+}
+
+function getSearchInputValue() {
+    return document
+        .getElementById('main-header-search')
+        .value
+        .toLowerCase()
+        .trim();
+}
+
+function filterPokemonByName(searchInput) {
+    const allPokemon = Object.values(pokemonCache);
+    return allPokemon.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchInput)
+    );
+}
+
+function showNotFound() {
+    document.getElementById('pokedex-content-area').innerHTML = getNotFound();
 }
 
 function renderAllLoadedPokemon() {
     const allPokemon = Object.values(pokemonCache);
     renderSearchResults(allPokemon);
-    document.getElementById('moreCards').classList.remove('d-none')
+    document.getElementById('moreCards').classList.remove('d-none');
 }
 
 function renderSearchResults(results) {
     const contentArea = document.getElementById('pokedex-content-area');
-
     let html = '';
 
     for (let i = 0; i < results.length; i++) {
         html += getPokemonCards(buildCardView(results[i]));
     }
-    document.getElementById('moreCards').classList.add('d-none')
+    document.getElementById('moreCards').classList.add('d-none');
     contentArea.innerHTML = html;
 }

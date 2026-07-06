@@ -1,0 +1,45 @@
+/* -------- initialer Ladebildschirm --------------------------*/
+.app-loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    background: linear-gradient(-90deg,
+                rgb(0, 6, 97) 20%,
+                rgb(3, 31, 131) 30%,
+                rgb(0, 65, 185) 45%,
+                rgb(22, 112, 255) 50%,
+                rgb(0, 65, 185) 55%,
+                rgb(3, 31, 131) 70%,
+                rgb(0, 6, 97) 80%);
+
+    transition: opacity .4s ease, visibility .4s ease;
+}
+
+.app-loading-screen.app-loading-screen-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.app-loading-icon {
+    width: 4rem;
+    height: 4rem;
+    animation: app-loading-spin 1s linear infinite;
+}
+
+.app-loading-screen p {
+    font-size: 1.5rem;
+    color: whitesmoke;
+}
+
+@keyframes app-loading-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}

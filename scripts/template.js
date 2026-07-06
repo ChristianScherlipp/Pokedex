@@ -1,8 +1,3 @@
-/* ============================================================
-   Alle Funktionen hier nehmen fertig aufbereitete Werte entgegen
-   und geben nur HTML-Strings zurueck. Keine Berechnungen, keine
-   Schleifen, keine Bedingungen - das passiert alles in script.js.
-   ============================================================ */
 
 function getPokemonCards(pokemon) {
     return `
@@ -96,15 +91,15 @@ function getPokemonAboutTab(view) {
         ${view.descriptionHtml}
         <div class="about-grid">
             <div class="about-row">
-                <span class="about-label">Größe</span>
+                <span class="about-label">Height</span>
                 <span class="about-value">${view.height} m</span>
             </div>
             <div class="about-row">
-                <span class="about-label">Gewicht</span>
+                <span class="about-label">weight</span>
                 <span class="about-value">${view.weight} kg</span>
             </div>
             <div class="about-row">
-                <span class="about-label">Fähigkeiten</span>
+                <span class="about-label">Ability</span>
                 <span class="about-value">${view.abilitiesText}</span>
             </div>
         </div>
@@ -135,7 +130,7 @@ function getPokemonEvolutionTab(itemsHtml) {
 }
 
 function getPokemonNoEvolution() {
-    return '<p class="no-evolution">Dieses Pokémon entwickelt sich nicht weiter.</p>';
+    return '<p class="no-evolution">This Pokémon does not evolve.</p>';
 }
 
 function getEvolutionItem(view) {
