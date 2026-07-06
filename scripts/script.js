@@ -17,15 +17,16 @@ function init() {
 }
 
 async function loadPokemonBatch() {
-    const firstLoadStartTime = isFirstLoad ? Date.now() : null;
-    const listData = await fetchPokemonList(BATCH_SIZE, offset);
-    
     if (isLoading) return;
     beginLoading();
+    const firstLoadStartTime = isFirstLoad ? Date.now() : null;
+
+    const listData = await fetchPokemonList(BATCH_SIZE, offset);
     if (!listData || listData.results.length === 0) {
         finishBatchLoad(firstLoadStartTime, true);
         return;
     }
+
     await processPokemonBatch(listData);
     finishBatchLoad(firstLoadStartTime, false);
 }
@@ -36,12 +37,13 @@ function beginLoading() {
 }
 
 async function processPokemonBatch(listData) {
-    const results = await fetchPokemonCardDataBatch(listData.results);
-
     if (totalPokemonCount === null) {
         totalPokemonCount = listData.count;
     }
+
+    const results = await fetchPokemonCardDataBatch(listData.results);
     renderPokemonBatch(results);
+
     offset += listData.results.length;
     checkAndHideButton();
 }
@@ -57,13 +59,15 @@ function finishBatchLoad(firstLoadStartTime, hasNoResults) {
 }
 
 function finishFirstLoad(firstLoadStartTime) {
+    if (!isFirstLoad) return;
+    isFirstLoad = false;
+
     const screen = document.getElementById('app-loading-screen');
+    if (!screen) return;
+
     const elapsed = Date.now() - firstLoadStartTime;
     const remaining = Math.max(0, MIN_LOADING_SCREEN_MS - elapsed);
 
-    if (!isFirstLoad) return;
-    isFirstLoad = false;
-    if (!screen) return;
     setTimeout(() => {
         screen.classList.add('app-loading-screen-hidden');
     }, remaining);
@@ -71,7 +75,6 @@ function finishFirstLoad(firstLoadStartTime) {
 
 async function fetchPokemonCardDataBatch(pokemonList) {
     const detailPromises = [];
-
     for (let i = 0; i < pokemonList.length; i++) {
         if (pokemonCache[pokemonList[i].name]) {
             detailPromises.push(Promise.resolve(pokemonCache[pokemonList[i].name]));
@@ -84,10 +87,11 @@ async function fetchPokemonCardDataBatch(pokemonList) {
 
 async function fetchPokemonCardData(url) {
     const data = await fetchPokemonDetails(url);
-    const types = data.types.map((t) => t.type.name);
-
     if (!data) return null;
-    if (types.length === 0) return null; // Absicherung falls API keine Typen liefert
+
+    const types = data.types.map((t) => t.type.name);
+    if (types.length === 0) return null;
+
     return {
         id: String(data.id).padStart(4, '0'),
         name: data.name,
@@ -98,7 +102,6 @@ async function fetchPokemonCardData(url) {
 
 function renderPokemonBatch(results) {
     let html = '';
-
     for (let i = 0; i < results.length; i++) {
         if (results[i] === null) continue;
         pokemonCache[results[i].name] = results[i];
@@ -120,7 +123,6 @@ function buildCardView(pokemon) {
 
 function buildTypeIconsHtml(types) {
     let html = '';
-
     for (let i = 0; i < types.length; i++) {
         html += getPokemonType(types[i]);
     }
@@ -135,7 +137,6 @@ function checkAndHideButton() {
 
 function updateLoadButton(loading) {
     const button = document.getElementById('load-more-btn');
-
     button.disabled = loading;
     button.innerText = loading ? 'Lädt...' : 'Mehr laden';
 }
@@ -146,14 +147,15 @@ function hideLoadButton() {
 /* ============================= Dialog ============================= */
 async function openPokemonDialog(identifier) {
     const dialogArea = document.getElementById('dialog-content-area');
-    const pokemon = await loadFullPokemonData(identifier);
-    const dialog = renderPokemonDialog(dialogArea, pokemon);
-
     showLoadingDialog(dialogArea);
+
+    const pokemon = await loadFullPokemonData(identifier);
     if (!pokemon) {
         closePokemonDialog();
         return;
     }
+
+    const dialog = renderPokemonDialog(dialogArea, pokemon);
     attachDialogListeners(dialog);
 }
 
@@ -164,12 +166,13 @@ function showLoadingDialog(dialogArea) {
 }
 
 function renderPokemonDialog(dialogArea, pokemon) {
-    const dialog = dialogArea.querySelector('dialog');
-
     dialogArea.innerHTML = getPokemonDialog(buildDialogView(pokemon));
+    const dialog = dialogArea.querySelector('dialog');
     dialog.showModal();
+
     switchDialogTab('about');
     history.replaceState(null, '', '#link-1');
+
     return dialog;
 }
 
@@ -177,6 +180,7 @@ function attachDialogListeners(dialog) {
     dialog.addEventListener('close', () => {
         document.body.classList.remove('dialog-open');
     });
+
     dialog.addEventListener('click', (event) => {
         if (event.target === dialog) closePokemonDialog();
     });
@@ -196,18 +200,20 @@ function closePokemonDialog() {
 
 function switchDialogTab(tab) {
     const dialog = document.querySelector('#dialog-content-area dialog');
-    const sections = dialog.querySelectorAll('.dialog-tab-section');
     if (!dialog) return;
+
+    const sections = dialog.querySelectorAll('.dialog-tab-section');
     for (let i = 0; i < sections.length; i++) {
         sections[i].classList.toggle('active', sections[i].dataset.tab === tab);
     }
 }
-/* ---------------------- Data acquisition for the dialog ---------------------- */
+/* ---------------------- Datenbeschaffung fuer den Dialog ---------------------- */
 async function loadFullPokemonData(identifier) {
     const details = await getPokemonDetailData(identifier);
+    if (!details) return null;
+
     const species = await getSpeciesData(details.id);
     const evolutionChain = await loadEvolutionChainFor(species);
-    if (!details) return null;
 
     return buildFullPokemonData(details, species, evolutionChain);
 }
@@ -235,14 +241,15 @@ function buildFullPokemonData(details, species, evolutionChain) {
 }
 
 async function getPokemonDetailData(identifier) {
-    const data = await fetchPokemonByName(identifier);
-    const cached = getCachedDetailByRawData(data);
-    const detail = buildPokemonDetail(data);
-
     if (pokemonDetailCache[identifier]) return pokemonDetailCache[identifier];
+
+    const data = await fetchPokemonByName(identifier);
     if (!data) return null;
+
+    const cached = getCachedDetailByRawData(data);
     if (cached) return cached;
 
+    const detail = buildPokemonDetail(data);
     pokemonDetailCache[data.name] = detail;
     pokemonDetailCache[data.id] = detail;
     return detail;
@@ -258,8 +265,8 @@ function buildPokemonDetail(data) {
         name: data.name,
         img: data.sprites.other.dream_world.front_default || data.sprites.front_default,
         types: data.types.map((t) => t.type.name),
-        height: (data.height / 10).toFixed(1),   // Dezimeter -> Meter
-        weight: (data.weight / 10).toFixed(1),    // Hektogramm -> Kilogramm
+        height: (data.height / 10).toFixed(1),
+        weight: (data.weight / 10).toFixed(1),
         abilities: data.abilities.map((a) => a.ability.name),
         stats: data.stats.map((s) => ({ name: s.stat.name, base: s.base_stat })),
         moves: data.moves.slice(0, 16).map((m) => m.move.name),
@@ -267,19 +274,19 @@ function buildPokemonDetail(data) {
 }
 
 async function getSpeciesData(id) {
-    const data = await fetchPokemonSpecies(id);
-    const species = buildSpeciesData(data);
-
     if (speciesCache[id]) return speciesCache[id];
+
+    const data = await fetchPokemonSpecies(id);
     if (!data) return null;
 
+    const species = buildSpeciesData(data);
     speciesCache[id] = species;
     return species;
 }
 
 function findPreferredLanguageEntry(entries) {
-    return entries.find((e) => e.language.name === 'en') ||
-        entries.find((e) => e.language.name === 'de');
+    return entries.find((e) => e.language.name === 'de') ||
+        entries.find((e) => e.language.name === 'en');
 }
 
 function buildSpeciesData(data) {
@@ -295,10 +302,11 @@ function buildSpeciesData(data) {
 
 async function getEvolutionChainData(url) {
     if (evolutionCache[url]) return evolutionCache[url];
-    const chain = buildEvolutionChainList(data.chain);
-    const data = await fetchEvolutionChain(url);
 
+    const data = await fetchEvolutionChain(url);
     if (!data) return [];
+
+    const chain = buildEvolutionChainList(data.chain);
     evolutionCache[url] = chain;
     return chain;
 }
@@ -327,11 +335,9 @@ function getIdFromSpeciesUrl(url) {
     const parts = url.split('/').filter(Boolean);
     return parts[parts.length - 1];
 }
-
-/* ---------------------- View models for the dialog templates ---------------------- */
-
+/* ---------------------- View-Modelle fuer die Dialog-Templates ---------------------- */
 function buildDialogView(pokemon) {
-    const numericId = parseInt(pokemon.id);
+    const numericId = parseInt(pokemon.id, 10);
     const navIds = buildNavIds(numericId);
     const tabsHtml = buildDialogTabsHtml(pokemon);
     return {
@@ -409,11 +415,11 @@ function formatStatName(name) {
 }
 
 function buildEvolutionHtml(chain) {
-    let itemsHtml = '';
     if (!chain || chain.length <= 1) {
         return getPokemonNoEvolution();
     }
 
+    let itemsHtml = '';
     for (let i = 0; i < chain.length; i++) {
         itemsHtml += getEvolutionItem({ name: capitalize(chain[i].name), img: chain[i].img });
         if (i < chain.length - 1) {
@@ -424,11 +430,11 @@ function buildEvolutionHtml(chain) {
 }
 
 function buildMovesHtml(moves) {
-    let chipsHtml = '';
     if (!moves || moves.length === 0) {
         return getPokemonNoMoves();
     }
 
+    let chipsHtml = '';
     for (let i = 0; i < moves.length; i++) {
         chipsHtml += getMoveChip(formatMoveName(moves[i]));
     }
@@ -442,17 +448,15 @@ function formatMoveName(move) {
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
-/* ============================= Search ============================= */
-
+/* ============================= Suche ============================= */
 function searchPokemon() {
     const searchInput = getSearchInputValue();
-    const filteredPokemon = filterPokemonByName(searchInput);
     if (searchInput.length < 3) {
         renderAllLoadedPokemon();
         return;
     }
 
+    const filteredPokemon = filterPokemonByName(searchInput);
     document.getElementById('moreCards').classList.add('d-none');
     if (filteredPokemon.length === 0) {
         showNotFound();
@@ -488,6 +492,7 @@ function renderAllLoadedPokemon() {
 
 function renderSearchResults(results) {
     const contentArea = document.getElementById('pokedex-content-area');
+
     let html = '';
 
     for (let i = 0; i < results.length; i++) {
