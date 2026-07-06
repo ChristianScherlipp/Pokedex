@@ -285,8 +285,8 @@ async function getSpeciesData(id) {
 }
 
 function findPreferredLanguageEntry(entries) {
-    return entries.find((e) => e.language.name === 'de') ||
-        entries.find((e) => e.language.name === 'en');
+    return entries.find((e) => e.language.name === 'en') ||
+        entries.find((e) => e.language.name === 'de');
 }
 
 function buildSpeciesData(data) {
