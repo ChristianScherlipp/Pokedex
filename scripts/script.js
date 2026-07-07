@@ -138,7 +138,7 @@ function checkAndHideButton() {
 function updateLoadButton(loading) {
     const button = document.getElementById('load-more-btn');
     button.disabled = loading;
-    button.innerText = loading ? 'Lädt...' : 'Mehr laden';
+    button.innerText = loading ? 'Loading...' : 'Load more';
 }
 
 function hideLoadButton() {

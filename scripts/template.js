@@ -31,7 +31,7 @@ function getPokemonType(type) {
 function getPokemonDialogLoading() {
     return `
     <dialog class="dialog-card">
-        <div class="dialog-loading">Lädt Pokémon-Daten...</div>
+        <div class="dialog-loading">Loading Pokémon data...</div>
     </dialog>
     `;
 }
@@ -39,7 +39,7 @@ function getPokemonDialogLoading() {
 function getPokemonDialog(view) {
     return `
     <dialog class="dialog-card poke-type-${view.mainType}-shadow">
-        <button class="dialog-close-btn" onclick="closePokemonDialog()" aria-label="Schließen">✕</button>
+        <button class="dialog-close-btn" onclick="closePokemonDialog()" aria-label="Close">✕</button>
         <header class="dialog-header poke-type-${view.mainType}">
             <section class="dialog-header-name-number">
                 <h2>${view.displayName}</h2>
